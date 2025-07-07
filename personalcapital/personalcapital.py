@@ -1,9 +1,14 @@
-import requests
 import re
 
-csrf_regexp = re.compile(r"globals.csrf='([a-f0-9-]+)'")
-base_url = 'https://home.personalcapital.com'
-api_endpoint = base_url + '/api'
+import requests
+
+csrf_regexp = re.compile(r"window\.csrf\s*=\s*'([a-f0-9-]+)'")
+base_url = "https://home.personalcapital.com/"
+api_endpoint = base_url + "/api"
+HEADERS = {
+    "user-agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1"
+}
+
 
 SP_HEADER_KEY = "spHeader"
 SUCCESS_KEY = "success"
