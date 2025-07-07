@@ -6,7 +6,7 @@ Python library for accessing Personal Capital data
 
 ## With Pip
 
-`pip install personalcapital`
+`pip install empower_personal_capital`
 
 ## With Source Code
 
