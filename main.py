@@ -1,9 +1,12 @@
-from personalcapital import PersonalCapital, RequireTwoFactorException, TwoFactorVerificationModeEnum
 import getpass
 import json
 import logging
 import os
 from datetime import datetime, timedelta
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Python 2 and 3 compatibility
 if hasattr(__builtins__, 'raw_input'):
