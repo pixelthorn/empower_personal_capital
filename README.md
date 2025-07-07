@@ -1,104 +1,125 @@
-# Personal Capital
+# Empower Personal Capital
 
-Python library for accessing Personal Capital data
+A modern Python library for accessing your Personal Capital (Empower) data, with built-in support for session persistence, two-factor authentication, and convenient account and transaction retrieval.
 
-# Installation
+## Features
 
-## With Pip
+- Simple login: Email/password authentication
+- Two-factor authentication: SMS and email support
+- Session persistence: Avoids 2FA every run
+- Fetch financial data: Account details, transactions, net worth
+- Easy automation: Ideal for scripts and data analysis
 
-`pip install empower_personal_capital`
+## Installation
 
-## With Source Code
+### With pip
 
-You can get the source code by cloning it from Github:
-
-`git clone https://github.com/haochi/personalcapital.git`
-
-or get the tarball:
-
-`curl -OJL https://github.com/haochi/personalcapital/tarball/master`
-
-then either include the library into your code, or install it with:
-
-`python setup.py install`
-
-# Usage
-
-You need to first create an instance.
-
-```python
-pc = PersonalCapital()
+```bash
+pip install empower_personal_capital
 ```
 
-Then you will need to authenticate the account by logging in:
+### From Source
 
-```python
-pc.login(email, password)
+Clone the repo:
+
+```bash
+git clone https://github.com/ChocoTonic/personalcapital-py.git
+cd personalcapital-py
 ```
 
-`login` may throw a `RequireTwoFactorException`, if two factor is enabled on your account and the current session is not yet associated with the account.
-In this case, you will need to pick a way to complete the two factor authenticate by calling
+Install dependencies and the package:
 
-```python
-pc.two_factor_challenge(mode)
+```bash
+pip install -r requirements.txt
+python setup.py install
 ```
 
-`mode` can either be `TwoFactorVerificationModeEnum.SMS` or `TwoFactorVerificationModeEnum.EMAIL`.  
-Then you need to finish the two factor challenge by verifying the code and continue the login process.
+## Usage
 
-```python
-pc.two_factor_authenticate(mode, raw_input('code'))
-pc.authenticate_password(password)
-```
-
-Once authenticated, you can start fetching data from the Personal Capital API.
-
-```python
-accounts_response = pc.fetch('/newaccount/getAccounts')
-```
-
-The above request will load your accounts data, and with that response you can get your net worth.
-
-```python
-print('Networth', accounts_response.json()['spData']['networth'])
-```
-
-To avoid two factor authentication every time you run the script, you can use `get_session()` to store your session somewhere and `set_session(session)` to re-use the session.
-
-Here's the entire thing.
+### Quick Example
 
 ```python
 from personalcapital import PersonalCapital, RequireTwoFactorException, TwoFactorVerificationModeEnum
 
 pc = PersonalCapital()
-
-email, password = "email@domain.tld", "password"
+email, password = "you@example.com", "your_password"
 
 try:
     pc.login(email, password)
 except RequireTwoFactorException:
     pc.two_factor_challenge(TwoFactorVerificationModeEnum.SMS)
-    pc.two_factor_authenticate(TwoFactorVerificationModeEnum.SMS, raw_input('code: '))
+    code = input("Enter 2FA code: ")
+    pc.two_factor_authenticate(TwoFactorVerificationModeEnum.SMS, code)
     pc.authenticate_password(password)
 
 accounts_response = pc.fetch('/newaccount/getAccounts')
 accounts = accounts_response.json()['spData']
-
-print('Networth: {0}'.format(accounts['networth']))
+print('Net worth:', accounts['networth'])
 ```
 
-# Example
+### Session Persistence
 
-See `main.py` for an example script.
+You can avoid having to enter 2FA every time by storing your session:
 
-To run it, simply run `python main.py`.
+```python
+session = pc.get_session()
+# Save session to a file
 
-Or set the environment email and password so you don't need to enter it every time.
+# Later...
+pc.set_session(session)
+```
+
+See `main.py` for a complete script with persistent sessions.
+
+### Running the Example Script
+
+The included [`main.py`](main.py) script provides a full working example with session saving/loading.
+
+To run:
 
 ```bash
-PEW_PASSWORD="password" PEW_EMAIL="email" python main.py
+python main.py
 ```
 
-# Personal Capital API
+You can also set environment variables to avoid entering your email and password each time:
 
-Please inspect the network requests to see what requests are possible. The `main.py` example includes two such calls.
+```bash
+PEW_EMAIL="you@example.com" PEW_PASSWORD="your_password" python main.py
+```
+
+If you do not set environment variables, the script will prompt for your credentials.
+
+### Fetching Transactions
+
+You can fetch transactions by making an API call. For example, to get transactions from the past 90 days (as shown in `main.py`):
+
+```python
+from datetime import datetime, timedelta
+
+now = datetime.now()
+start_date = (now - timedelta(days=91)).strftime('%Y-%m-%d')
+end_date = (now - timedelta(days=1)).strftime('%Y-%m-%d')
+
+transactions_response = pc.fetch(
+    '/transaction/getUserTransactions',
+    {
+        "sort_cols": "transactionTime",
+        "sort_rev": "true",
+        "page": "0",
+        "rows_per_page": "100",
+        "startDate": start_date,
+        "endDate": end_date,
+        "component": "DATAGRID",
+    },
+)
+transactions = transactions_response.json()['spData']['transactions']
+print(f"Found {len(transactions)} transactions")
+```
+
+## Advanced Usage
+
+- Handling two-factor via Email:
+  Replace `TwoFactorVerificationModeEnum.SMS` with `TwoFactorVerificationModeEnum.EMAIL` in the challenge and authenticate methods.
+
+- Other API endpoints:
+  You can inspect your browser’s network requests while using Personal Capital, or refer to the code and experiment with additional endpoints using `pc.fetch(endpoint, data)`.
