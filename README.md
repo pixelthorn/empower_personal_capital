@@ -96,7 +96,7 @@ To run it, simply run `python main.py`.
 Or set the environment email and password so you don't need to enter it every time.
 
 ```bash
-PEW_PASSWORD="password" PEW_EMAIL="email" python main.py 
+PEW_PASSWORD="password" PEW_EMAIL="email" python main.py
 ```
 
 # Personal Capital API
