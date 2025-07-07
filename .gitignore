@@ -9,3 +9,4 @@ MANIFEST
 
 session.json
 .env
+*.egg-info/
