@@ -8,7 +8,7 @@ version = "0.0.1"
 authors = [{ name = "chocotonic" }]
 description = "A Python library for interacting with the Personal Capital API. Easily log in, handle two-factor authentication, and fetch financial data like account details and net worth. Simplify automation and data retrieval from your Personal Capital account with this lightweight and user-friendly package."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
