@@ -89,6 +89,23 @@ PEW_EMAIL="you@example.com" PEW_PASSWORD="your_password" python main.py
 
 If you do not set environment variables, the script will prompt for your credentials.
 
+Absolutely. Here’s a clear section you can add to your README that explains the `.env` file usage and lists the required variables.
+
+## Environment Variables and the .env File
+
+You can define your credentials in a `.env` file at the root of your project to avoid entering your email and password every time you run the script. The package will automatically load these using [`python-dotenv`](https://pypi.org/project/python-dotenv/).
+
+Create a file named `.env` and add your credentials:
+
+```
+PEW_EMAIL=your_email@example.com
+PEW_PASSWORD=your_password
+```
+
+`.env.example` is included as a template. Never commit your real `.env` file with credentials to version control.
+
+If these variables are set, the script will use them and will not prompt for your email or password.
+
 ### Fetching Transactions
 
 You can fetch transactions by making an API call. For example, to get transactions from the past 90 days (as shown in `main.py`):
