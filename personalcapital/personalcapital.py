@@ -16,30 +16,37 @@ CSRF_KEY = "csrf"
 AUTH_LEVEL_KEY = "authLevel"
 ERRORS_KEY = "errors"
 
+
 def getSpHeaderValue(result, valueKey):
     if (SP_HEADER_KEY in result) and (valueKey in result[SP_HEADER_KEY]):
         return result[SP_HEADER_KEY][valueKey]
     return None
 
+
 def getErrorValue(result):
     try:
-        return getSpHeaderValue(result, ERRORS_KEY)[0]['message']
+        return getSpHeaderValue(result, ERRORS_KEY)[0]["message"]
     except (ValueError, IndexError):
         return None
 
+
 class AuthLevelEnum(object):
     USER_REMEMBERED = "USER_REMEMBERED"
+
 
 class TwoFactorVerificationModeEnum(object):
     SMS = 0
     # PHONE = 1
     EMAIL = 2
 
+
 class RequireTwoFactorException(Exception):
     pass
 
+
 class LoginFailedException(Exception):
     pass
+
 
 class PersonalCapital(object):
     def __init__(self):
@@ -75,14 +82,14 @@ class PersonalCapital(object):
         elif mode == TwoFactorVerificationModeEnum.EMAIL:
             return self.__challenge_email()
 
-    def fetch(self, endpoint, data = None):
+    def fetch(self, endpoint, data=None):
         """
         for getting data after logged in
         """
         payload = {
             "lastServerChangeId": "-1",
             "csrf": self.__csrf,
-            "apiClient": "WEB"
+            "apiClient": "WEB",
         }
         if data is not None:
             payload.update(data)
@@ -90,7 +97,7 @@ class PersonalCapital(object):
         return self.post(endpoint, payload)
 
     def post(self, endpoint, data):
-        response = self.__session.post(api_endpoint + endpoint, data)
+        response = self.__session.post(api_endpoint + endpoint, data, headers=HEADERS)
         return response
 
     def get_session(self):
@@ -105,11 +112,8 @@ class PersonalCapital(object):
         """
         self.__session.cookies = requests.utils.cookiejar_from_dict(cookies)
 
-    # private methods
-
-
     def __get_csrf_from_home_page(self, url):
-        r = self.__session.get(url)
+        r = self.__session.get(url, headers=HEADERS)
         found_csrf = csrf_regexp.search(r.text)
 
         if found_csrf:
@@ -148,7 +152,7 @@ class PersonalCapital(object):
             "challengeType": challenge_type,
             "apiClient": "WEB",
             "bindDevice": "false",
-            "csrf": self.__csrf
+            "csrf": self.__csrf,
         }
 
     def __generate_authentication_payload(self, code):
@@ -158,7 +162,7 @@ class PersonalCapital(object):
             "apiClient": "WEB",
             "bindDevice": "false",
             "code": code,
-            "csrf": self.__csrf
+            "csrf": self.__csrf,
         }
 
     def __challenge_email(self):
@@ -187,6 +191,6 @@ class PersonalCapital(object):
             "referrerId": "",
             "passwd": passwd,
             "apiClient": "WEB",
-            "csrf": self.__csrf
+            "csrf": self.__csrf,
         }
         return self.post("/credential/authenticatePassword", data)
