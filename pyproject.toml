@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "empower_personal_capital"
-version = "0.0.1"
+version = "0.0.2"
 authors = [{ name = "chocotonic" }]
 description = "A Python library for interacting with the Personal Capital API. Easily log in, handle two-factor authentication, and fetch financial data like account details and net worth. Simplify automation and data retrieval from your Personal Capital account with this lightweight and user-friendly package."
 readme = "README.md"
