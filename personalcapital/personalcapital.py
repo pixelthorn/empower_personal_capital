@@ -3,7 +3,7 @@ import re
 import requests
 
 csrf_regexp = re.compile(r"window\.csrf\s*=\s*'([a-f0-9-]+)'")
-base_url = "https://home.personalcapital.com/"
+base_url = "https://pc-api.empower-retirement.com/"
 api_endpoint = base_url + "/api"
 HEADERS = {
     "user-agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1"
